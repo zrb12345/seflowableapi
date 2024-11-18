@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.se.system.mapper.ExMapper">
+    
+    <resultMap type="Ex" id="ExResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="power"    column="power"    />
+    </resultMap>
+
+    <sql id="selectExVo">
+        select id, name, power from ex
+    </sql>
+
+    <select id="selectExList" parameterType="Ex" resultMap="ExResult">
+        <include refid="selectExVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="power != null "> and power = #{power}</if>
+        </where>
+    </select>
+    
+    <select id="selectExById" parameterType="Integer" resultMap="ExResult">
+        <include refid="selectExVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertEx" parameterType="Ex">
+        insert into ex
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="power != null">power,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="power != null">#{power},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEx" parameterType="Ex">
+        update ex
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="power != null">power = #{power},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExById" parameterType="Integer">
+        delete from ex where id = #{id}
+    </delete>
+
+    <delete id="deleteExByIds" parameterType="String">
+        delete from ex where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

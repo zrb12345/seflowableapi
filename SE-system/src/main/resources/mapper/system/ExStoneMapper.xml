@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.se.system.mapper.ExStoneMapper">
+    
+    <resultMap type="ExStone" id="ExStoneResult">
+        <result property="exId"    column="ex_id"    />
+        <result property="stoneId"    column="stone_id"    />
+        <result property="userPer"    column="user_per"    />
+        <result property="id"    column="id"    />
+        <result property="stoneName" column="sname" />
+        <result property="exName" column="ename" />
+    </resultMap>
+
+    <sql id="selectExStoneVo">
+
+        select es.*,s.name sname,e.name ename from ex_stone es
+        left join stone s on es.stone_id = s.id
+        left join ex e on e.id = es.ex_id
+
+    </sql>
+
+    <select id="selectExStoneList" parameterType="ExStone" resultMap="ExStoneResult">
+        <include refid="selectExStoneVo"/>
+        <where>  
+            <if test="exId != null "> and  ex_id = #{exId}</if>
+            <if test="stoneId != null "> and stone_id = #{stoneId}</if>
+            <if test="userPer != null "> and user_per = #{userPer}</if>
+        </where>
+    </select>
+    
+    <select id="selectExStoneById" parameterType="Integer" resultMap="ExStoneResult">
+        <include refid="selectExStoneVo"/>
+        where es.id = #{id}
+    </select>
+
+    <insert id="insertExStone" parameterType="ExStone">
+        insert into ex_stone
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="exId != null">ex_id,</if>
+            <if test="stoneId != null">stone_id,</if>
+            <if test="userPer != null">user_per,</if>
+            <if test="id != null">id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="exId != null">#{exId},</if>
+            <if test="stoneId != null">#{stoneId},</if>
+            <if test="userPer != null">#{userPer},</if>
+            <if test="id != null">#{id},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExStone" parameterType="ExStone">
+        update ex_stone
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="exId != null">ex_id = #{exId},</if>
+            <if test="stoneId != null">stone_id = #{stoneId},</if>
+            <if test="userPer != null">user_per = #{userPer},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExStoneById" parameterType="Integer">
+        delete from ex_stone where id = #{id}
+    </delete>
+
+    <delete id="deleteExStoneByIds" parameterType="String">
+        delete from ex_stone where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
